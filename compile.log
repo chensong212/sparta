@@ -1,0 +1,64 @@
+To compile the code, first read the "steps to build a SPARTA excutable:" in the Manual. Some more tips:
+
+1) enter the "src" directory, type a command like:
+
+make serial
+ 
+it creates a folder named "Obj_serial" and an excutable program "spa_serial" under the "src" directory.
+
+
+copy the spa_serial to the "examples/free" folder. Under the directory, type:
+
+./spa_serial < in.free
+
+it runs.
+---------------------------------------
+
+however, when compile the parallel program, we type:
+
+make mpi
+
+it failed. 
+
+2) we enter the "MAKE" directory. copy the "Makefile.mpi" and may renamed it as  "Makefile.foo". set the key parameters as:
+
+# compiler/linker settings
+# specify flags and libraries needed for your compiler
+
+CC =		mpicxx
+CCFLAGS =	-O3
+SHFLAGS =	-fPIC
+DEPFLAGS =	-M
+
+LINK =		mpicxx
+LINKFLAGS =	-O
+LIB =           
+SIZE =		size
+
+ARCHIVE =	ar
+ARFLAGS =	-rc
+SHLIBFLAGS =	-shared
+
+
+MPI_INC = -I/global/mpich-3.1/include
+MPI_PATH = -L/global/mpich-3.1/lib     
+MPI_LIB = /global/mpich-3.1/lib/libfmpich.so /global/mpich-3.1/lib/libmpich.so /global/mpich-3.1/lib/libmpl.so
+
+3) back to "src" folder, and type:
+
+make foo
+
+it works! A folder named "Obj_foo" and an excutable program "spa_foo" are created under the "src" directory.
+
+4) copy the "spa_foo" to "examples/free" folder, and type:
+
+mpiexec -n 4 ./spa_foo < in.free
+
+it runs!
+
+[NOTE: the "mpirun" may not works, just replace it to mpiexec]
+
+-------------------------------------------------------
+-------------------------------------------------------
+updated by Song Chen
+14.01.2020
