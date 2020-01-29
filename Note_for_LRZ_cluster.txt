@@ -1,0 +1,110 @@
+#############################
+Login
+#############################
+
+ssh -Y lxlogin7.lrz.de -l ge54cel2
+ssh -Y lxlogin8.lrz.de -l ga54cel2
+
+
+#############################
+Document:
+#############################
+
+https://doku.lrz.de/display/PUBLIC/Linux+Cluster
+-------------------------------------------------
+The status of the cluster 
+https://www.lrz.de/services/compute/linux-cluster/status/SLURM/SLURM_Status.html
+-------------------------------------------------
+
+
+#############################
+Data system
+#############################
+
+---------------------------------------
+! sent DATA FROM LRZ to local computer
+---------------------------------------
+
+scp grid.plt Song Chen@aoi.aer.mw.tum.de:~/incoming 
+
+scp gridr2e-3.plt Song Chen@aoi.aer.mw.tum.de:~/incoming
+
+scp ge54cel@lxlogin7.lrz.de:/dss/dssfs02/lwp-dss-0001/t7841/t7841-dss-0000/ga25koj3/biggrid2/grid.plt ~/incoming/
+
+---------------------------------------
+! sent data from local computer to LRZ
+---------------------------------------
+scp -r sparta/ ge54cel2@lxlogin7.lrz.de:/dss/dsshome1/lxc0E/ge54cel2
+
+#############################
+Compile the Sparta
+#############################
+1) check module
+
+module list
+module show mpi.intel/2019
+
+2) find the libraries
+echo $MPI_LIB
+
+3) Set the path in the Makefile.foo
+
+MPI_INC = -I/lrz/sys/intel/impi2019u6/impi/2019.6.154/intel64/include
+MPI_PATH = -L/lrz/sys/intel/impi2019u6/impi/2019.6.154/intel64/lib/
+MPI_LIB = /lrz/sys/intel/impi2019u6/impi/2019.6.154/intel64/lib/libmpicxx.so.12
+
+4) compile the code
+make foo
+
+
+#############################
+The bash for submitting the job
+#############################
+
+#!/bin/bash
+#SBATCH -o ./myjob_output.%j.%N.out
+#SBATCH -D ./
+#SBATCH -J test
+#SBATCH --get-user-env
+#SBATCH --clusters=tum_aer
+#SBATCH --partition=tum_aer_batch
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=28
+# --- multiples of 28 for mpp2 ---
+#SBATCH --mail-type=end,begin
+#SBATCH --mail-user=song.chen@tum.de
+#SBATCH --export=NONE
+#SBATCH --time=04:00:00
+#
+module load slurm_setup
+#
+#
+#
+#module load gcc/7
+#
+#cd $SCRATCH/mydata
+#
+cd /dss/dsshome1/lxc0E/ge54cel2/sparta/examples/circle_test2
+mpirun -n $SLURM_NTASKS ./spa_foo > outputfile.txt
+-------------------------------------------------
+-------------------------------------------------
+
+
+### start script
+
+sbatch clusterscript.md 
+
+#### see queue
+
+squeue --clusters=mpp2
+
+### delete script
+
+scancel --clusters=mpp2 194595
+
+
+
+
+
+
+
