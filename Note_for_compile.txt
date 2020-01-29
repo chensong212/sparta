@@ -1,3 +1,5 @@
+############################################################
+
 To compile the code, first read the "steps to build a SPARTA excutable:" in the Manual. Some more tips:
 
 1) enter the "src" directory, type a command like:
